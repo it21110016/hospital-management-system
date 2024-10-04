@@ -292,7 +292,7 @@ const AddPatient = () => {
                             </div>
                         </div>
                         <br />
-                        <div className="form-group row">
+                        {/* <div className="form-group row">
                             <label htmlFor="picture" className="col-sm-2 col-form-label">Image</label>
                             <div className="col-sm-8">
                                 <input
@@ -301,7 +301,7 @@ const AddPatient = () => {
                                     onChange={handleFileChange}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         <br />
                         <center><button type="submit" className="btn btn-secondary">Submit</button></center>
                         <br />

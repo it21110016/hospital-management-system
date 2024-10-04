@@ -220,7 +220,7 @@ function UpdatePatient() {
                     </div>
                     <br />
 
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                         <label htmlFor="picture" className="col-sm-2 col-form-label">Picture</label>
                         <div className="col-sm-10">
                             <input type="file" className="form-control" id="picture" onChange={handleFileChange} />
@@ -232,7 +232,7 @@ function UpdatePatient() {
                                 />
                             )}
                         </div>
-                    </div>
+                    </div> */}
                     <br />
 
                     <center>
