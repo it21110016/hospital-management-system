@@ -59,7 +59,7 @@ function MedicalReportUpdate() {
                             axios.put("http://localhost:8040/report/update/"+id, form)
                             .then(() => {
                                 toast.success('Report Added')
-                                navigate('/allreport');
+                                window.location.replace('/allreport');
                             })
                             .catch((err) => {
                                 alert(err);

@@ -17,12 +17,14 @@ const AddPharmacy = () => {
     // const [status, setStatus] = useState('Ongoing'); // Default status
     // const [startDate, setStartDate] = useState('');
     // const [endDate, setEndDate] = useState('');
-    const [picture, setPicture] = useState(null);
+    const [picture, setPicture] = useState(null); // since the file will be an object.
 
+
+    //useNavigate: A function that will be used to redirect the user to the pharmacy orders page after successful form submission.
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault(); //default action (form reload
     
         const data = {
             drugId,

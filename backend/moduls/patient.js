@@ -7,13 +7,6 @@ const patientSchema = new Schema({
         type: String,
         required: true
     },
-    lastName: {
-        type: String,
-        required: true
-    },
-    picture: {
-        type: String
-    },
     age: {
         type: Number,
         required: true
@@ -24,10 +17,6 @@ const patientSchema = new Schema({
         enum: ['Male', 'Female']
     },
     contactNumber: {
-        type: String,
-        required: true
-    },
-    email: {
         type: String,
         required: true
     },
@@ -50,8 +39,8 @@ const patientSchema = new Schema({
     status: {
         type: String,
         required: true,
-        enum: ['Ongoing', 'Completed', 'Discontinued'],
-        default: 'Ongoing'
+        enum: ['Admitted', 'Discharged', 'Normal', 'Critical'],
+        default: 'Normal'
     },
     startDate: {
         type: Date,
@@ -59,6 +48,32 @@ const patientSchema = new Schema({
     },
     endDate: Date,
 
+     // Add Emergency Contact Information
+     emergencyContact: {
+        name: {
+            type: String,
+            required: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true
+        },
+        relation: {
+            type: String,
+            required: true
+        }
+    },
+
+    // Add a flag for caregiver notifications
+    caregiverNotification: {
+        type: Boolean,
+        default: false
+    }
+    
 }, { timestamps: true })
 
 module.exports = mongoose.model("patient", patientSchema);

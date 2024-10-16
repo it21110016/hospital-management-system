@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 function UpdatePatient() {
     const [patient, setPatient] = useState({
         firstName: '',
-        lastName: '',
         age: '',
         gender: '',
         status: '',
         illness: '',
         doctorName: '',
         treatmentName: '',
-        picture: '',
         startDate: '',
         endDate: '',
         address: '',
         contactNumber: '',
-        email: ''
+        emergencyContact: {
+            name: '',
+            phone: '',
+            email: '',
+            relation: ''
+        }
     });
-    const [pictureFile, setPictureFile] = useState(null);
-    const navigate = useNavigate();
+    
     const { id } = useParams();
 
-    // Fetch patient details by ID
     const getPatient = () => {
         axios.get(`http://localhost:8040/patient/get/${id}`)
             .then((res) => {
@@ -32,7 +33,13 @@ function UpdatePatient() {
                 setPatient({
                     ...patientData,
                     startDate: patientData.startDate ? patientData.startDate.split('T')[0] : '',
-                    endDate: patientData.endDate ? patientData.endDate.split('T')[0] : ''
+                    endDate: patientData.endDate ? patientData.endDate.split('T')[0] : '',
+                    emergencyContact: patientData.emergencyContact || {
+                        name: '',
+                        phone: '',
+                        email: '',
+                        relation: ''
+                    }
                 });
             })
             .catch((err) => {
@@ -44,10 +51,10 @@ function UpdatePatient() {
         getPatient();
     }, [id]);
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        
+        // Validation
         if (!patient.age || isNaN(patient.age) || patient.age <= 0) {
             toast.error("Please enter a valid Age.");
             return;
@@ -56,47 +63,43 @@ function UpdatePatient() {
             toast.error("Please enter a valid 10-digit Contact Number.");
             return;
         }
-        if (!patient.email.trim() || !/^\S+@\S+\.\S+$/.test(patient.email)) {
-            toast.error("Please enter a valid Email address.");
-            return;
-        }
         if (patient.endDate && new Date(patient.endDate) < new Date(patient.startDate)) {
             toast.error("End Date must be after Start Date.");
             return;
         }
-
-        const formData = new FormData();
-        Object.keys(patient).forEach(key => {
-            formData.append(key, patient[key]);
-        });
-        if (pictureFile) {
-            formData.append('picture', pictureFile);
+        if (!patient.emergencyContact.phone.trim() || !/^\d{10}$/.test(patient.emergencyContact.phone)) {
+            toast.error("Please enter a valid 10-digit Emergency Contact Number.");
+            return;
         }
+        const patientData = {
+            ...patient,
+            emergencyContact: patient.emergencyContact // Keep it as an object
+        };
 
-        axios.put(`http://localhost:8040/patient/update/${id}`, formData)
+        axios.put(`http://localhost:8040/patient/update/${id}`, patientData)
             .then(() => {
                 toast.success('Patient updated successfully');
                 setTimeout(() => {
                     window.location.replace('/patients');
-                  }, 1000);
+                }, 1000);
             })
             .catch((err) => {
                 toast.error(err.message);
             });
     };
 
-    // Handle input change
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setPatient(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    // Handle file change
-    const handleFileChange = (e) => {
-        setPictureFile(e.target.files[0]);
+        
+        if (name.startsWith("emergencyContact.")) {
+                const field = name.split('.')[1];
+                setPatient({
+                    ...patient,
+                    emergencyContact: { ...patient.emergencyContact, [field]: value }
+                });
+            } else {
+                setPatient({ ...patient, [name]: value });
+            }
     };
 
     return (
@@ -107,17 +110,9 @@ function UpdatePatient() {
                 </center>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group row">
-                        <label htmlFor="firstName" className="col-sm-2 col-form-label">First Name</label>
+                        <label htmlFor="firstName" className="col-sm-2 col-form-label">Name</label>
                         <div className="col-sm-10">
                             <input type="text" className="form-control" id="firstName" name="firstName" value={patient.firstName} onChange={handleChange} required />
-                        </div>
-                    </div>
-                    <br />
-
-                    <div className="form-group row">
-                        <label htmlFor="lastName" className="col-sm-2 col-form-label">Last Name</label>
-                        <div className="col-sm-10">
-                            <input type="text" className="form-control" id="lastName" name="lastName" value={patient.lastName} onChange={handleChange} required />
                         </div>
                     </div>
                     <br />
@@ -144,17 +139,15 @@ function UpdatePatient() {
                     <div className="form-group row">
                         <label htmlFor="status" className="col-sm-2 col-form-label">Status</label>
                         <div className="col-sm-10">
-                            {/* <input type="text" className="form-control" id="status" name="status" value={patient.status} onChange={handleChange} required /> */}
-                        
                             <select id="status" name="status" className="form-control" value={patient.status} onChange={handleChange} required>
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Discontinued">Discontinued</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Admitted">Admitted</option>
+                                <option value="Discharged">Discharged</option>
+                                <option value="Critical">Critical</option>
                             </select>
                         </div>
                     </div>
                     <br />
-                    {/* enum: ['Ongoing', 'Completed', 'Discontinued'], */}
 
                     <div className="form-group row">
                         <label htmlFor="illness" className="col-sm-2 col-form-label">Illness</label>
@@ -212,27 +205,38 @@ function UpdatePatient() {
                     </div>
                     <br />
 
+                    {/* Emergency Contact Section */}
+                    <center><h3>Emergency Contact Details</h3></center>
                     <div className="form-group row">
-                        <label htmlFor="email" className="col-sm-2 col-form-label">Email</label>
+                        <label htmlFor="emergencyContact.name" className="col-sm-2 col-form-label">Name</label>
                         <div className="col-sm-10">
-                            <input type="email" className="form-control" id="email" name="email" value={patient.email} onChange={handleChange} required />
+                            <input type="text" className="form-control" id="emergencyContact.name" name="emergencyContact.name" value={patient.emergencyContact.name} onChange={handleChange} required />
                         </div>
                     </div>
                     <br />
 
-                    {/* <div className="form-group row">
-                        <label htmlFor="picture" className="col-sm-2 col-form-label">Picture</label>
+                    <div className="form-group row">
+                        <label htmlFor="emergencyContact.phone" className="col-sm-2 col-form-label">Phone</label>
                         <div className="col-sm-10">
-                            <input type="file" className="form-control" id="picture" onChange={handleFileChange} />
-                            {patient.picture && (
-                                <img 
-                                    src={patient.picture} 
-                                    alt="Patient" 
-                                    style={{ width: '100px', height: 'auto', marginTop: '10px' }}
-                                />
-                            )}
+                            <input type="text" className="form-control" id="emergencyContact.phone" name="emergencyContact.phone" value={patient.emergencyContact.phone} onChange={handleChange} required />
                         </div>
-                    </div> */}
+                    </div>
+                    <br />
+
+                    <div className="form-group row">
+                        <label htmlFor="emergencyContact.email" className="col-sm-2 col-form-label">Email</label>
+                        <div className="col-sm-10">
+                            <input type="email" className="form-control" id="emergencyContact.email" name="emergencyContact.email" value={patient.emergencyContact.email} onChange={handleChange} required/>
+                        </div>
+                    </div>
+                    <br />
+
+                    <div className="form-group row">
+                        <label htmlFor="emergencyContact.relation" className="col-sm-2 col-form-label">Relation</label>
+                        <div className="col-sm-10">
+                            <input type="text" className="form-control" id="emergencyContact.relation" name="emergencyContact.relation" value={patient.emergencyContact.relation} onChange={handleChange} required/>
+                        </div>
+                    </div>
                     <br />
 
                     <center>

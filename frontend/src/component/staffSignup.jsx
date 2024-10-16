@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import I1 from "../images/bg1.jpeg";
+import I1 from "../images/bg1.jpg";
 import MenuItem from '@mui/material/MenuItem';
 
 const Signup = () => {

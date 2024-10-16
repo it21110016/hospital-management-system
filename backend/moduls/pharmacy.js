@@ -11,9 +11,6 @@ const pharmacySchema = new Schema({
         type: String,
         required: true
     },
-    // picture: {
-    //     type: String
-    // },
     category: {
         type: String,
         required: true,
@@ -42,25 +39,10 @@ const pharmacySchema = new Schema({
         required: true,
         enum: ['headache', 'muscle pain', 'chills' , 'Rash' , 'Hives', 'vomiting' , 'dizziness', 'weight gain']
      },
-    // doctorName: {
-    //     type: String,
-    //     required: true
-    // },
-    // treatmentName: {
-    //     type: String,
-    //     required: true
-    // },
-    // status: {
-    //     type: String,
-    //     required: true,
-    //     enum: ['Ongoing', 'Completed', 'Discontinued'],
-    //     default: 'Ongoing'
-    // },
     expireDate: {
         type: Date,
         required: true
     },
-   // endDate: Date,
 
 }, { timestamps: true })
 

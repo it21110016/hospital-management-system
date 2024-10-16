@@ -3,33 +3,44 @@ const Schema = mongoose.Schema;
 
 const InventorySchema = new Schema({
 
-    inventory_id:{
-        type:String,
-        required: true
-        
-    },
-    inventory_type:{
+    itemName: {
         type: String,
-        required: true
+        required: true,
     },
-    item_name:{
-        type:String,
-        required: true 
+    description: {
+        type: String,
+        required: true,
     },
-    location:{
-        type:String,
-        required: true
+    category: {
+        type: String,
+        required: true,
+        enum: ['Medicine', 'Equipment', 'Supply', 'Consumable'], // Categories specific to hospital inventory
     },
-    update_date:{
-        type:String,
-        required: true
+    quantity: {
+        type: Number,
+        required: true,
     },
-    status:{
-        type:String,
-        required: true
-    }
+    unit: {
+        type: String,
+        required: true,
+        enum: ['pieces', 'packs', 'liters', 'boxes', 'units', 'bottles'], // Different unit types for hospital items
+    },
+    pricePerUnit: {
+        type: Number,
+        required: true,
+    },
+    supplier: {
+        type: String,
+        trim: true
+    },
+    manufactureDate: {
+        type: Date,
+    },
+    expiryDate: {
+        type: Date,
+    },
+    
 },{timestamps:true})
-
 
 
 module.exports = mongoose.model("inventory",InventorySchema);

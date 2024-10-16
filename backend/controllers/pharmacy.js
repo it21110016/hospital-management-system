@@ -1,4 +1,4 @@
-const Pharmacy = require('../moduls/pharmacy'); // Import your Patient model
+const Pharmacy = require('../moduls/pharmacy'); // Import your Pharmacy model
 const fs = require('fs');
 const path = require('path');
 
@@ -38,7 +38,7 @@ exports.addOrder = async (req, res) => {
     }
 };
 
-// Update an existing Order
+// updates an existing order by its ID using data from the request body.
 exports.updateOrder = async (req, res) => {
     try {
         const orderId = req.params.id;
@@ -80,7 +80,7 @@ exports.updateOrder = async (req, res) => {
     }
 };
 
-// Get all Order
+// retrieves all orders from the database.
 exports.getAllOrders = async (req, res) => {
     try {
         const orders = await Pharmacy.find();
@@ -93,7 +93,7 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
-// Get a single order by ID
+// fetches an order by its ID.
 exports.getOneOrder = async (req, res) => {
     try {
         const orderId = req.params.id;
@@ -112,7 +112,7 @@ exports.getOneOrder = async (req, res) => {
     }
 };
 
-// Delete a order
+// Delete a order by id
 exports.deleteOrder = async (req, res) => {
     try {
         const orderId = req.params.id;

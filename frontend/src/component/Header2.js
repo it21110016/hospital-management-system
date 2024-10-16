@@ -1,6 +1,4 @@
 import React from "react";
-import logo from '../images/logo.jpeg';
-import I1 from "../images/header.jpeg";
 
 function Header2() {
   return (
@@ -19,7 +17,7 @@ function Header2() {
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
               <a class="nav-item nav-link active" href="/inventory" style={{ padding: '0 50px', color: 'white' }}>Inventory Management</a>
-              <a class="nav-item nav-link active" href="/inventory" style={{ padding: '0 50px', color: 'white' }}>Billing & Accounting</a>
+              <a class="nav-item nav-link active" href="/billing" style={{ padding: '0 50px', color: 'white' }}>Billing & Accounting</a>
               <a class="nav-item nav-link" href="/pharmacy" style={{ padding: '0 50px', color: 'white' }}>Pharmacy Management</a>
               <a class="nav-item nav-link" href="/allAttendace" style={{ padding: '0 50px', color: 'white' }}>Human Resources</a>
               <a class="nav-item nav-link " href="/allreport" style={{ padding: '0 50px', color: 'white' }}>Medical Reports</a>

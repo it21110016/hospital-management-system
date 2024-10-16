@@ -4,108 +4,90 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 
 const AddPatient = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [age, setAge] = useState('');
-    const [gender, setGender] = useState('');
-    const [contactNumber, setContactNumber] = useState('');
-    const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
-    const [illness, setIllness] = useState('');
-    const [doctorName, setDoctorName] = useState('');
-    const [treatmentName, setTreatmentName] = useState('');
-    const [status, setStatus] = useState('Ongoing'); // Default status
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [picture, setPicture] = useState(null);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        age: '',
+        gender: '',
+        contactNumber: '',
+        address: '',
+        illness: '',
+        doctorName: '',
+        treatmentName: '',
+        status: 'Normal',
+        startDate: '',
+        endDate: '',
+        emergencyContact: {
+            name: '',
+            phone: '',
+            email: '',
+            relation: ''
+        }
+    });
 
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        // Validation checks
-        if (!firstName.trim()) {
-            toast.error("First Name is required.");
-            return;
-        }
-        if (!lastName.trim()) {
-            toast.error("Last Name is required.");
-            return;
-        }
-        if (!age || isNaN(age) || age <= 0) {
-            toast.error("Please enter a valid Age.");
-            return;
-        }
-        if (!gender) {
-            toast.error("Gender is required.");
-            return;
-        }
-        if (!contactNumber.trim() || !/^\d{10}$/.test(contactNumber)) {
-            toast.error("Please enter a valid 10-digit Contact Number.");
-            return;
-        }
-        if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) {
-            toast.error("Please enter a valid Email address.");
-            return;
-        }
-        if (!address.trim()) {
-            toast.error("Address is required.");
-            return;
-        }
-        if (!illness.trim()) {
-            toast.error("Illness is required.");
-            return;
-        }
-        if (!doctorName.trim()) {
-            toast.error("Doctor Name is required.");
-            return;
-        }
-        if (!treatmentName.trim()) {
-            toast.error("Treatment Name is required.");
-            return;
-        }
-        if (!startDate) {
-            toast.error("Start Date is required.");
-            return;
-        }
-        if (endDate && new Date(endDate) < new Date(startDate)) {
-            toast.error("End Date must be after Start Date.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('firstName', firstName);
-        formData.append('lastName', lastName);
-        formData.append('age', age);
-        formData.append('gender', gender);
-        formData.append('contactNumber', contactNumber);
-        formData.append('email', email);
-        formData.append('address', address);
-        formData.append('illness', illness);
-        formData.append('doctorName', doctorName);
-        formData.append('treatmentName', treatmentName);
-        formData.append('status', status);
-        formData.append('startDate', startDate);
-        formData.append('endDate', endDate);
-        if (picture) {
-            formData.append('picture', picture);
-        }
-
-        axios.post("http://localhost:8040/patient/add", formData)
-            .then(() => {
-                toast.success("Patient added successfully!");
-                setTimeout(() => {
-                    window.location.replace('/patients');
-                  }, 1000);
-            })
-            .catch(() => {
-                toast.error("Something went wrong.");
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        // Handle nested object updates
+        if (name.startsWith('emergencyContact.')) {
+            const field = name.split('.')[1];
+            setFormData({
+                ...formData,
+                emergencyContact: { ...formData.emergencyContact, [field]: value }
             });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
-    const handleFileChange = (e) => {
-        setPicture(e.target.files[0]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        // Validation checks
+        const errors = validateFormData(formData);
+        if (errors.length > 0) {
+            errors.forEach(error => toast.error(error));
+            setLoading(false);
+            return;
+        }
+
+        const patientData = {
+            ...formData,
+            emergencyContact: formData.emergencyContact // Keep it as an object
+        };
+        
+        try {
+            await axios.post("http://localhost:8040/patient/add", patientData);
+            toast.success("Patient added successfully!");
+            setTimeout(() => {
+                window.location.replace('/patients');
+            }, 1000);
+        } catch (error) {
+            toast.error("Something went wrong.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const validateFormData = (data) => {
+        const errors = [];
+        if (!data.firstName.trim()) errors.push("First Name is required.");
+        else if (!data.age || isNaN(data.age) || data.age <= 0) errors.push("Please enter a valid Age.");
+        else if (!data.gender) errors.push("Gender is required.");
+        else if (!data.contactNumber.trim() || !/^\d{10}$/.test(data.contactNumber)) errors.push("Please enter a valid 10-digit Contact Number.");
+        else if (!data.address.trim()) errors.push("Address is required.");
+        else if (!data.illness.trim()) errors.push("Illness is required.");
+        else if (!data.doctorName.trim()) errors.push("Doctor Name is required.");
+        else if (!data.treatmentName.trim()) errors.push("Treatment Name is required.");
+        else if (!data.startDate) errors.push("Start Date is required.");
+        else if (!data.endDate) errors.push("End Date is required.");
+        else if (new Date(data.endDate) < new Date(data.startDate)) errors.push("End Date must be after Start Date.");
+        else if (!data.emergencyContact.name.trim()) errors.push("Emergency Contact Name is required.");
+        else if (!data.emergencyContact.phone.trim() || !/^\d{10}$/.test(data.emergencyContact.phone)) errors.push("Please enter a valid 10-digit Emergency Contact Phone Number.");
+        else if (!data.emergencyContact.email.trim() || !/^\S+@\S+\.\S+$/.test(data.emergencyContact.email)) errors.push("Please enter a valid Emergency Contact Email address.");
+        else if (!data.emergencyContact.relation.trim()) errors.push("Emergency Contact Relation is required.");
+        return errors;
     };
 
     return (
@@ -120,41 +102,30 @@ const AddPatient = () => {
                         <center><h1>Add Patient</h1></center>
                         <br /><br />
                         <div className="form-group row">
-                            <label htmlFor="firstName" className="col-sm-2 col-form-label">First Name</label>
+                            <label htmlFor="firstName" className="col-sm-2 col-form-label">Name</label>
                             <div className="col-sm-8">
                                 <input
                                     type="text"
+                                    name='firstName'
                                     className="form-control"
                                     placeholder="Enter First Name"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
+                                    value={formData.firstName}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
                         <br />
-                        <div className="form-group row">
-                            <label htmlFor="lastName" className="col-sm-2 col-form-label">Last Name</label>
-                            <div className="col-sm-8">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Enter Last Name"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <br />
+
                         <div className="form-group row">
                             <label htmlFor="age" className="col-sm-2 col-form-label">Age</label>
                             <div className="col-sm-8">
                                 <input
                                     type="number"
+                                    name='age'
                                     className="form-control"
                                     placeholder="Enter Age"
-                                    value={age}
-                                    onChange={(e) => setAge(e.target.value)}
-                                    required
+                                    value={formData.age}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -164,8 +135,9 @@ const AddPatient = () => {
                             <div className="col-sm-8">
                                 <select
                                     className="form-control"
-                                    value={gender}
-                                    onChange={(e) => setGender(e.target.value)}
+                                    name='gender'
+                                    value={formData.gender}
+                                    onChange={handleChange}
                                 >
                                     <option value="">Select Gender</option>
                                     <option value="Male">Male</option>
@@ -180,36 +152,25 @@ const AddPatient = () => {
                                 <input
                                     type="text"
                                     className="form-control"
+                                    name='contactNumber'
                                     placeholder="Enter Contact Number"
-                                    value={contactNumber}
-                                    onChange={(e) => setContactNumber(e.target.value)}
-                                    required
+                                    value={formData.contactNumber}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
                         <br />
-                        <div className="form-group row">
-                            <label htmlFor="email" className="col-sm-2 col-form-label">Email</label>
-                            <div className="col-sm-8">
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    placeholder="Enter Email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <br />
+
                         <div className="form-group row">
                             <label htmlFor="address" className="col-sm-2 col-form-label">Address</label>
                             <div className="col-sm-8">
                                 <input
                                     type="text"
                                     className="form-control"
+                                    name='address'
                                     placeholder="Enter Address"
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
+                                    value={formData.address}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -219,10 +180,11 @@ const AddPatient = () => {
                             <div className="col-sm-8">
                                 <input
                                     type="text"
+                                    name='illness'
                                     className="form-control"
                                     placeholder="Enter Illness"
-                                    value={illness}
-                                    onChange={(e) => setIllness(e.target.value)}
+                                    value={formData.illness}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -233,9 +195,10 @@ const AddPatient = () => {
                                 <input
                                     type="text"
                                     className="form-control"
+                                    name='doctorName'
                                     placeholder="Enter Doctor Name"
-                                    value={doctorName}
-                                    onChange={(e) => setDoctorName(e.target.value)}
+                                    value={formData.doctorName}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -246,9 +209,10 @@ const AddPatient = () => {
                                 <input
                                     type="text"
                                     className="form-control"
+                                    name='treatmentName'
                                     placeholder="Enter Treatment Name"
-                                    value={treatmentName}
-                                    onChange={(e) => setTreatmentName(e.target.value)}
+                                    value={formData.treatmentName}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -258,12 +222,14 @@ const AddPatient = () => {
                             <div className="col-sm-8">
                                 <select
                                     className="form-control"
-                                    value={status}
-                                    onChange={(e) => setStatus(e.target.value)}
+                                    name='status'
+                                    value={formData.status}
+                                    onChange={handleChange}
                                 >
-                                    <option value="Ongoing">Ongoing</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Discontinued">Discontinued</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Admitted">Admitted</option>
+                                <option value="Discharged">Discharged</option>
+                                <option value="Critical">Critical</option>
                                 </select>
                             </div>
                         </div>
@@ -273,9 +239,10 @@ const AddPatient = () => {
                             <div className="col-sm-8">
                                 <input
                                     type="date"
+                                    name='startDate'
                                     className="form-control"
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
+                                    value={formData.startDate}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
@@ -285,23 +252,71 @@ const AddPatient = () => {
                             <div className="col-sm-8">
                                 <input
                                     type="date"
+                                    name='endDate'
                                     className="form-control"
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
+                                    value={formData.endDate}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
                         <br />
-                        {/* <div className="form-group row">
-                            <label htmlFor="picture" className="col-sm-2 col-form-label">Image</label>
+                        <center><h4>Emergency Contact Details</h4></center>
+                        <br />
+                        <div className="form-group row">
+                            <label htmlFor="emergencyContact.name" className="col-sm-2 col-form-label">Name</label>
                             <div className="col-sm-8">
                                 <input
-                                    type="file"
+                                    type="text"
+                                    name="emergencyContact.name"
                                     className="form-control"
-                                    onChange={handleFileChange}
+                                    placeholder="Enter Emergency Contact Name"
+                                    value={formData.emergencyContact.name}
+                                    onChange={handleChange}
                                 />
                             </div>
-                        </div> */}
+                        </div>
+                        <br />
+                        <div className="form-group row">
+                            <label htmlFor="emergencyContact.phone" className="col-sm-2 col-form-label">Phone</label>
+                            <div className="col-sm-8">
+                                <input
+                                    type="text"
+                                    name="emergencyContact.phone"
+                                    className="form-control"
+                                    placeholder="Enter Emergency Contact Phone"
+                                    value={formData.emergencyContact.phone}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        <br />
+                        <div className="form-group row">
+                            <label htmlFor="emergencyContact.email" className="col-sm-2 col-form-label">Email</label>
+                            <div className="col-sm-8">
+                                <input
+                                    type="email"
+                                    name="emergencyContact.email"
+                                    className="form-control"
+                                    placeholder="Enter Emergency Contact Email"
+                                    value={formData.emergencyContact.email}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        <br />
+                        <div className="form-group row">
+                            <label htmlFor="emergencyContact.relation" className="col-sm-2 col-form-label">Relation</label>
+                            <div className="col-sm-8">
+                                <input
+                                    type="text"
+                                    name="emergencyContact.relation"
+                                    className="form-control"
+                                    placeholder="Enter Emergency Contact Relation"
+                                    value={formData.emergencyContact.relation}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
                         <br />
                         <center><button type="submit" className="btn btn-secondary">Submit</button></center>
                         <br />

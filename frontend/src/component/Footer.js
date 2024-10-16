@@ -1,5 +1,5 @@
 import React from "react";
-import logo from '../images/logo.jpeg';
+import logo from '../images/logo.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
@@ -115,7 +115,7 @@ function Footer() {
           <li>
             <div class="text-center p-4" style={{ "background-color": "rgba(0, 0, 0, 0.025);" }}>
               © 2024 Copyright :
-              <a class="text-reset fw-bold" href="#"> WD03.02.T40</a>
+              <a class="text-reset fw-bold" href="#">ITP24R_B1_W29</a>
             </div>
           </li>
 

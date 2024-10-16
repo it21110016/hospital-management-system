@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import { Link } from "react-router-dom";
-
+import Button from 'react-bootstrap/Button';
 
 export default function AllInventory(){
 
@@ -17,7 +17,7 @@ export default function AllInventory(){
         })
         }
         getInventory();
-    },[inventories])
+    },[])
 
     
     //serach 
@@ -29,9 +29,11 @@ export default function AllInventory(){
     }
   
     const deleteDataC = (e) =>{
-        var result = window.confirm("Are you sure?");
+        var result = window.confirm("Are you sure you want to delete this item?");
       if(result == true){
           axios.delete(`http://localhost:8040/inventory/delete/${e._id}`).then((res)=>{
+                // alert("Deleted");
+                window.location.reload();
           }).catch(e =>{
               
           })
@@ -44,7 +46,7 @@ export default function AllInventory(){
     return (
        
         <div style={{ backgroundSize:"container" , backgroundColor:"#e9f4f8"}}> <br></br> 
-                <div style={{width: '90%', display: 'flex', justifyContent: 'flex-end'}}>
+                <div style={{width: '90%', display: 'flex', justifyContent: 'flex-end'}} className="no-print">
                     <input
                         onChange={searchIncome}
                         placeholder="Search....."
@@ -71,7 +73,7 @@ export default function AllInventory(){
             
             
                 <div>
-                    <div style={{ padding: '30px'}}>
+                    <div style={{ padding: '30px'}} className="no-print">
                     <Link to="/inventory/add">
                      <button type="button2" class="btn btn-info"> Add </button>
                     </Link>
@@ -81,49 +83,45 @@ export default function AllInventory(){
                 <table class="table table-bordered table-hover table-primary">
                     <thead >
                         <tr>
-                        <th scope="col">Inventory ID</th>
-                        <th scope="col">Inventory Type</th>
-                        <th scope="col">Inventory Name</th>
-                        <th scope="col">Loaction</th>
-                        <th scope="col">Update Date</th>
-                        <th scope="col">Status</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
+                        <th scope="col">Item Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Price Per Unit</th>
+                        <th scope="col">Supplier</th>
+                        <th scope="col" className="no-print">Update</th>
+                        <th scope="col" className="no-print">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                     {inventories.filter( e => 
-                        e.inventory_id.includes(serQuary) ||
-                        e.inventory_id.toLowerCase().includes(serQuary) ||
-                        e.inventory_id.toLowerCase().includes(serQuary))
+                        e.itemName.toLowerCase().includes(serQuary) ||
+                        e.category.toLowerCase().includes(serQuary))
                     .map(inventory => ( 
                     
     
                         <tr>
-                        <td>{inventory.inventory_id}</td>
-                        <td>{inventory.inventory_type}</td>
-                        <td>{inventory.item_name}</td>
-                        <td>{inventory.location}</td>
-                        <td>{inventory.update_date}</td>
-                        <td>{inventory.status}</td>
-                        <td><Link to={"/inventory/update/"+inventory._id} className="btn btn-success">Update</Link></td>
-                        <td><button className="btn btn-danger"  onClick={() => {deleteDataC(inventory)}}>Delete</button></td>
+                        <td>{inventory.itemName}</td>
+                        <td>{inventory.category}</td>
+                        <td>{inventory.quantity}</td>
+                        <td>{inventory.unit}</td>
+                        <td>{inventory.pricePerUnit}</td>
+                        <td>{inventory.supplier}</td>
+                        <td className="no-print"><Link to={"/inventory/update/"+inventory._id} className="btn btn-success">Update</Link></td>
+                        <td className="no-print"><button className="btn btn-danger"  onClick={() => {deleteDataC(inventory)}}>Delete</button></td>
                         </tr> 
                         
                         ))}
                     </tbody>
                     </table>
-                    <Link to={"/inventory/order/report"} className="btn btn-outline-dark">Add Order</Link> <t></t>
-                    <Link to={"/inventory/bill/report"} className="btn btn-outline-dark">Add Bill</Link>
-                    
                     </center>
                     <br></br>
                 </div>
                     
            
-             <center><Link to="/inventory/report">
-                <button type="button2" class="btn btn-outline-warning"> Generate Report</button>
-            </Link></center> <br></br><br></br>
+                <center className="no-print">
+                <Button onClick={() => { window.print(); }} variant="outline-success">Generate Report</Button>
+            </center> <br></br><br></br>
         </div>
   );
 }

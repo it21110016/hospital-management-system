@@ -3,10 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';  // Import Modal from react-bootstrap
 
 export default function Patients() {
     const [patients, setPatients] = useState([]);
     const [serQuary, setSerQuary] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [selectedPatient, setSelectedPatient] = useState(null);
 
     useEffect(() => {
         function getPatients() {
@@ -25,6 +28,44 @@ export default function Patients() {
     function searchIncome(event) {
         setSerQuary(event.target.value);
     }
+
+    // Handle Emergency button click
+    function handleEmergencyClick(patient) {
+        setSelectedPatient(patient);  // Set the selected patient
+        setShowModal(true);  // Show confirmation modal
+    }
+
+    // Handle the confirmation of Emergency status change
+    function confirmEmergencyStatus() {
+        if (selectedPatient) {
+            // Step 1: Update patient status to "Emergency"
+            axios.put(`http://localhost:8040/patient/update/${selectedPatient._id}`, {
+                ...selectedPatient,
+                status: "Critical"
+            })
+            .then(() => {
+                // Step 2: Send notifications after status update
+                axios.put(`http://localhost:8040/patient/notification/${selectedPatient._id}`)
+                .then(() => {
+                    alert("Emergency notification sent successfully!");
+    
+                    // After successful update and notification, reload patients data and close the modal
+                    setPatients(prevPatients => prevPatients.map(p =>
+                        p._id === selectedPatient._id ? { ...p, status: "Emergency" } : p
+                    ));
+                    setShowModal(false);
+                    window.location.reload();
+                })
+                .catch((err) => {
+                    alert('Error sending emergency notification: ' + err.message);
+                });
+            })
+            .catch((err) => {
+                alert('Error updating patient status: ' + err.message);
+            });
+        }
+    }    
+    
 
     return (
         <div style={{ backgroundSize: "container", backgroundColor: "#e9f4f8" }}>
@@ -62,13 +103,14 @@ export default function Patients() {
                 <Table striped bordered hover style={{ width: '90%' }}>
                     <thead>
                         <tr>
-                            <th>First Name</th>
+                            <th>Name</th>
                             <th>Age</th>
                             <th>Gender</th>
                             <th>Illness</th>
                             <th>Assigned Doctor</th>
                             <th>Admit Date</th>
                             <th>Treatments</th>
+                            <th>Status</th>
                             <th className="no-print">Actions</th> {/* Hide actions in print */}
                         </tr>
                     </thead>
@@ -76,7 +118,6 @@ export default function Patients() {
                         {patients
                             .filter(patient =>
                                 patient.firstName.toLowerCase().includes(serQuary.toLowerCase()) ||
-                                patient.lastName.toLowerCase().includes(serQuary.toLowerCase()) ||
                                 patient.illness.toLowerCase().includes(serQuary.toLowerCase()) ||
                                 patient.doctorName.toLowerCase().includes(serQuary.toLowerCase())
                             )
@@ -89,19 +130,20 @@ export default function Patients() {
                                     <td>{patient.doctorName}</td>
                                     <td>{patient.startDate.split('T')[0]}</td>
                                     <td>{patient.treatmentName}</td>
-                                    {/* <td>
-                                        {patient.picture ? (
-                                            <img
-                                                src={`http://localhost:8040/UploadImage/Patients/${patient.picture}`}
-                                                alt={patient.firstName}
-                                                style={{ width: '100px', height: '100px' }}
-                                            />
-                                        ) : (
-                                            <span>No Image</span>
-                                        )}
-                                    </td> */}
+                                    <td>{patient.status == 'Critical' ? (
+                                        <span style={{ color: 'red' }}>{patient.status}</span>
+                                    ) : patient.status}
+                                    </td>
                                     <td className="no-print">
                                         <Link to={`/getPatient/${patient._id}`} className="btn btn-outline-dark">More Details</Link>
+                                    </td>
+                                    <td className="no-print">
+                                        {patient.status !== 'Critical' ? (
+                                            <Button variant="danger" onClick={() => handleEmergencyClick(patient)}>
+                                                Emergency
+                                            </Button>
+                                        ) : ( <p></p> )
+                                        }
                                     </td>
                                 </tr>
                             ))}
@@ -113,6 +155,25 @@ export default function Patients() {
                 <Button onClick={() => { window.print(); }} variant="outline-success">Generate Report</Button>
             </center>
             <br /><br />
+
+            {/* Confirmation Modal */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Emergency Status</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to change the status of patient {selectedPatient?.firstName} to "Critical"?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={confirmEmergencyStatus}>
+                        Yes, Change Status
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            
         </div>
     );
 }

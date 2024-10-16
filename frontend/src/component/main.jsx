@@ -132,7 +132,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-1.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://th.bing.com/th/id/R.76a8252e44414e5356d6c7771fac7636?rik=%2bzau8m3aylXDgg&riu=http%3a%2f%2finteractives.dallasnews.com%2f2015%2fnew-parkland%2fimages%2fer-bed_1200.jpg&ehk=2ZLqpE0rsf9QXFdJ%2f4ajziZ3m3y2IIpmqhS1irsa3lg%3d&risl=&pid=ImgRaw&r=0" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -140,7 +140,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-2.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://images.pexels.com/photos/1170979/pexels-photo-1170979.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -148,7 +148,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-3.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://th.bing.com/th/id/OIP.NCXCZpB-edi7DW5ygE_PywHaE8?pid=ImgDet&rs=1" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -156,7 +156,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-4.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://th.bing.com/th/id/OIP.D2kS5oKnXDSQg8oezBzaAgHaE7?pid=ImgDet&rs=1" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -164,7 +164,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-5.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://th.bing.com/th/id/OIP.NCXCZpB-edi7DW5ygE_PywHaE8?pid=ImgDet&rs=1" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -172,7 +172,7 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-6.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://th.bing.com/th/id/OIP.D2kS5oKnXDSQg8oezBzaAgHaE7?pid=ImgDet&rs=1" alt="" class="img-fluid" />
                   </a>
                 </div>
@@ -180,15 +180,15 @@ export default function Main() {
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-7.jpg" class="galelry-lightbox">
-                    <img src='https://lh6.googleusercontent.com/proxy/xwdyIZ-zHGjHXoD5BZ_xDcelwFxH8D93PcAGOjDUFdGDPX6DGj4SB_lXt9MTjhUPBsHjks40B7A26ZrPmfha2k9I96PJvfJGcPB1h7VspDr64BbZ28HtKPmPMJlUfOm-Kg=s0-d' alt="" class="img-fluid" />
+                  <a class="galelry-lightbox">
+                  <img src="https://th.bing.com/th/id/R.76a8252e44414e5356d6c7771fac7636?rik=%2bzau8m3aylXDgg&riu=http%3a%2f%2finteractives.dallasnews.com%2f2015%2fnew-parkland%2fimages%2fer-bed_1200.jpg&ehk=2ZLqpE0rsf9QXFdJ%2f4ajziZ3m3y2IIpmqhS1irsa3lg%3d&risl=&pid=ImgRaw&r=0" alt="" class="img-fluid" />
                   </a>
                 </div>
               </div>
 
               <div class="col-lg-3 col-md-4">
                 <div class="gallery-item">
-                  <a href="assets/img/gallery/gallery-8.jpg" class="galelry-lightbox">
+                  <a class="galelry-lightbox">
                     <img src="https://i.pinimg.com/originals/4f/88/1a/4f881a110739c4ffd8bb92ddb8fd4204.jpg" alt="" class="img-fluid" />
                   </a>
                 </div>

@@ -11,7 +11,8 @@ export default function AddAttendance(){
     const [outTime, setOutTime] = useState("");
     const [details, setDetails] = useState("");
     const [total_hours, setTotalHours] = useState("");
-    const salary= total_hours;
+    const [salary, setSalary] = useState(0);
+
     const navigate = useNavigate();
 
     function sendData(e){
@@ -31,6 +32,10 @@ export default function AddAttendance(){
             })
         }else if (outTime === '') {
             toast.error("Please Choose Out Time..", {
+                id: 'name'
+            })
+        }else if (new Date(`1970-01-01T${inTime}:00`) >= new Date(`1970-01-01T${outTime}:00`)) {
+            toast.error("In Time should be less than Out Time", {
                 id: 'name'
             })
         }else if (details === '') {
@@ -55,7 +60,7 @@ export default function AddAttendance(){
         console.log(newAttendace)
         axios.post("http://localhost:8040/attendance/add",newAttendace).then(() => {
             toast.success("Success");
-            navigate('/inventory');
+            navigate('/allAttendace');
 
         }).catch((err) => {
             toast.success("UnSuccess");
@@ -70,6 +75,43 @@ export default function AddAttendance(){
     }
 }
 
+// Function to update salary based on total hours
+function handleTotalHoursChange(e) {
+    const selectedHours = e.target.value;
+    setTotalHours(selectedHours);
+
+    // Calculate salary based on total hours
+    let calculatedSalary = 0;
+    switch (selectedHours) {
+      case "1":
+        calculatedSalary = 500;
+        break;
+      case "2":
+        calculatedSalary = 750;
+        break;
+      case "3":
+        calculatedSalary = 800;
+        break;
+      case "4":
+        calculatedSalary = 1000;
+        break;
+      case "5":
+        calculatedSalary = 1500;
+        break;
+      case "6":
+        calculatedSalary = 1800;
+        break;
+      case "7":
+        calculatedSalary = 2000;
+        break;
+      case "8":
+        calculatedSalary = 2200;
+        break;
+      default:
+        calculatedSalary = 0;
+    }
+    setSalary(calculatedSalary);
+  }
 
     return (
         <div style={{background: "linear-gradient(to bottom, #ffffff, #add8e6, #378cab)",
@@ -126,39 +168,44 @@ export default function AddAttendance(){
             </div><br/>
 
            
-            <div cclassName="form-group row">
-            <label htmlFor="hourse" className="col-sm-2 col-form-label">Hours </label>  
-            
-            <select onChange={(e)=>{
-                    setTotalHours(e.target.value);
-                }} className="col-sm-1"> 
-       
-            <option value = "500"> 1   
-            </option> 
-            <option value = "750"> 2   
-            </option>  
-            <option value = "800"> 3   
-            </option>    
-            <option value = "1000"> 4   
-            </option> 
-            <option value = "1500"> 5   
-            </option>  
-            <option value = "1800"> 6   
-            </option>
-            <option value = "2000"> 7   
-            </option>  
-            <option value = "2200"> 8   
-            </option>
-            
-            </select>
-            </div>  <br/>
+            <div className="form-group row">
+              <label htmlFor="hours" className="col-sm-2 col-form-label">
+                Hours
+              </label>
+              <div className="col-sm-8">
+                <select
+                  value={total_hours}
+                  onChange={handleTotalHoursChange}
+                  className="form-control"
+                >
+                  <option value="">Select Hours</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </select>
+              </div>
+            </div>
+            <br />
 
             <div className="form-group row">
-                <label htmlFor="age" className="col-sm-2 col-form-label">Salary</label>
-                <div className="col-sm-8">
-                <input type="number" value={total_hours} className="form-control" />
-                </div>
-            </div><br/>
+              <label htmlFor="salary" className="col-sm-2 col-form-label">
+                Salary
+              </label>
+              <div className="col-sm-8">
+                <input
+                  type="number"
+                  value={salary}
+                  readOnly
+                  className="form-control"
+                />
+              </div>
+            </div>
+            <br />
 
 
             <center><button type="submit" className="btn btn-dark" >Submit</button></center><br/>

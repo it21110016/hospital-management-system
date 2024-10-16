@@ -4,8 +4,6 @@ const Report = require('../moduls/report')
 exports.addReport = async (req, res) => {
  
  try{
-  
-   
       const prefix = 'RID'
       const USER_ID = (prefix + Date.now())
 
@@ -66,14 +64,18 @@ exports.getOneReport = async (req, res) => {
 
 exports.updateReport =  (async(req,res)=>{
 
-    
+    let file = 'N/A'
+    if (req.file) {
+        file = req.file.filename
+    }
+
     let userId = req.params.id;
 
     const report_id = req.body.report_id;
     const doctor_name = req.body.doctor_name;
     const illness = req.body.illness;
     const date = req.body.date;
-    const picture = req.file ? req.file.filename : undefined // Update picture if a new file is uploaded
+    const picture = file;
    
     const updateReport = {
         report_id,

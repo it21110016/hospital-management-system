@@ -36,8 +36,10 @@ import Pharmacy from './component/pharmacy';
 import AddPharmacy from './component/addpharmacy';
 import GetPharmacy from './component/getpharmacy';
 import UpdatePharmacy from './component/updatepharmacy';
-
-
+import UpdateBilling from './component/updatebilling';
+import Billing from './component/billing';
+import AddBilling from './component/addbilling';
+import GetBilling from './component/getbilling';
 
 
 function App() {
@@ -79,6 +81,7 @@ function App() {
           <Route path="/inventory/order/report" element={<AddOrderReport />}/>
           <Route path="/inventory/bill/report" element={<AddBillReport />}/>
           <Route path="/main" element={<Main />}/>
+          
           <Route path="/patients" element={<Patients />}/>
           <Route path="/addPatient" element={<AddPatient />}/>
           <Route path="/getPatient/:id" element={<GetPatient />}/>
@@ -88,6 +91,12 @@ function App() {
           <Route path="/addPharmacy" element={<AddPharmacy />}/>
           <Route path="/getPharmacy/:id" element={<GetPharmacy />}/>
           <Route path="/pharmacy/:id" element={<UpdatePharmacy />}/>
+
+          <Route path="/billing" element={<Billing />}/>
+          <Route path="/addbilling" element={<AddBilling />}/>
+          <Route path="/getbilling/:id" element={<GetBilling />}/>
+          <Route path="/updatebilling/:id" element={<UpdateBilling />}/>
+
         </Routes>
         <Footer />
       </BrowserRouter>

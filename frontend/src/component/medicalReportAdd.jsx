@@ -47,7 +47,7 @@ const AddReport = () => {
 
             axios.post("http://localhost:8040/report/add",form).then(()=>{
                 toast.success("Successfully Added");
-                navigate('/allreport');
+                window.location.replace('/allreport');
             }).catch(()=>{
                 toast.success("Something Went Wrong")
             })

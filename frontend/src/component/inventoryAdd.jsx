@@ -6,12 +6,15 @@ import axios from 'axios';
 
 const AddInventory = () => {
 
-    const [inventory_id, setInventoryID] = useState('')
-    const [inventory_type, setInventoryType] = useState('')
-    const [item_name, setItemName] = useState('')
-    const [location, setLocation] = useState('')
-    const [update_date, setUpdateDate] = useState('')
-    const [status, setStatus] = useState('')
+    const [itemName, setItemName] = useState('')
+    const [description, setDescription] = useState('')
+    const [category, setCategory] = useState('')
+    const [quantity, setQuantity] = useState(0)
+    const [unit, setUnit] = useState('')
+    const [pricePerUnit, setPricePerUnit] = useState(0)
+    const [supplier, setSupplier] = useState('')
+    const [manufactureDate, setManufactureDate] = useState('')
+    const [expiryDate, setExpiryDate] = useState('')
    
     const navigate = useNavigate();
 
@@ -19,58 +22,79 @@ const AddInventory = () => {
        
         e.preventDefault();
 
-        if (inventory_id === '') {
-            toast.error("Please Provide Inventory ID..", {
+        if (itemName === '') {
+            toast.error("Please Provide Item Name..", {
                 id: 'IDI'
             })
         }
-        else if (inventory_type === '') {
-            toast.error("Please Provide Inventory Type..", {
+        else if (description === '') {
+            toast.error("Please Provide Item Description..", {
                 id: 'Itp'
             })
         }
-        else if (item_name === '') {
-            toast.error("Please Provide Item Name..", {
+        else if (category === '') {
+            toast.error("Please Provide Item Category..", {
                 id: 'Iname'
             })
-        }else if (location === '') {
-            toast.error("Please Provide Location..", {
+        }else if (quantity === 0 || isNaN(quantity)) {
+            toast.error("Please Provide quantity..", {
                 id: 'ILocation'
             })
-        }else if (update_date === '') {
-            toast.error("Please Provide Update Date..", {
+        }else if (unit === '') {
+            toast.error("Please Provide Unit..", {
                 id: 'IUp'
             })
-        }else if (status === '') {
-            toast.error("Please Provide Status..", {
+        }else if (pricePerUnit === 0 || isNaN(pricePerUnit)) {
+            toast.error("Please Provide price per unit..", {
+                id: 'Is'
+            })
+        }else if (supplier === '') {
+            toast.error("Please Provide supplier..", {
                 id: 'Is'
             })
         }
-        
-       else if ( inventory_id !== '' && inventory_type !== '' && item_name !== '' && location !== '' && update_date !== ''  && status !== ''  ) {
+        else if (manufactureDate === '') {
+            toast.error("Please Provide manufacture date..", {
+                id: 'Is'
+            })
+        }
+        else if (expiryDate === '') {
+            toast.error("Please Provide expiry date..", {
+                id: 'Is'
+            })
+        }
+        else if (new Date(expiryDate) < new Date(manufactureDate)) toast.error("expiry Date must be after manufacture Date.");
+
+       else if ( itemName !== '' && description !== '' && category !== '' && quantity !== '' && unit !== ''  && pricePerUnit !== '' && supplier !== '' && manufactureDate !== '' && expiryDate !== '') {
         
         const newInventory = {
-            inventory_id, 
-            inventory_type,
-            item_name,
-            location,
-            update_date,
-            status
+            itemName,
+            description,
+            category,
+            quantity,
+            unit,
+            pricePerUnit,
+            supplier,
+            manufactureDate,
+            expiryDate
         }
         
             axios.post("http://localhost:8040/inventory/add",newInventory).then(()=>{
                 toast.success("Successfully Added");
-                navigate('/allAttendace');
+                navigate('/inventory');
             }).catch(()=>{
                 toast.error("Something Went Wrong");
             })
 
-            setInventoryID('')
-            setInventoryType('')
-            setItemName('')
-            setLocation('')
-            setUpdateDate('')
-            setStatus('')
+            setItemName('');
+            setDescription('');
+            setCategory('');
+            setQuantity('');
+            setUnit('');
+            setPricePerUnit('');
+            setSupplier('');
+            setManufactureDate('');
+            setExpiryDate('');
         }
 
     }
@@ -84,67 +108,101 @@ const AddInventory = () => {
             <center><h1>Add Inventory</h1></center>
             <br></br><br></br>
             <div></div>
-            <div className="form-group row">
-                <label htmlFor="name" className="col-sm-2 col-form-label">Inventory ID</label>
-                <div className="col-sm-8">
-                    <input type="text" className="form-control" placeholder='Enter the Inventory ID' onChange={(e)=>{
-                    setInventoryID(e.target.value);
-                }}/>
-                </div>
-            </div><br/>
-
-           
-
-            <div cclassName="form-group row">
-            <label htmlFor="hourse" className="col-sm-2 col-form-label">Inventory Type </label>  
-            
-            <select onChange={(e)=>{
-                    setInventoryType(e.target.value);
-                }} className="col-sm-1"> 
-       
-            <option value = "Select"> Select   
-            </option> 
-            <option value = "Medical"> Medical   
-            </option>
-            <option value = "Surgery"> Surgery
-            </option>  
-            <option value = "Lab"> Lab  
-            </option>      
-            </select>
-            </div>  <br/>
 
             <div className="form-group row">
-                <label htmlFor="inTime" className="col-sm-2 col-form-label">Item Name</label>
+                <label htmlFor="itemName" className="col-sm-2 col-form-label">Item Name</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control"  placeholder="Enter the Item Name" onChange={(e)=>{
+                    <input type="text" className="form-control" placeholder='Enter Item Name' onChange={(e)=>{
                     setItemName(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Item Location</label>
+                <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control" placeholder="Enter the Item Location" onChange={(e)=>{
-                    setLocation(e.target.value);
+                <input type="text" className="form-control"  placeholder="Enter the description" onChange={(e)=>{
+                    setDescription(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Update Date</label>
+                            <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
+                            <div className="col-sm-8">
+                                <select
+                                    className="form-control"
+                                    onChange={(e) => setCategory(e.target.value)}
+                                >
+                                    <option value="">Select Category</option>
+                                    <option value="Medicine">Medicine</option>
+                                    <option value="Equipment">Equipment</option>
+                                    <option value="Supply">Supply</option>
+                                    <option value="Consumable">Consumable</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+
+            <div className="form-group row">
+                <label htmlFor="quantity" className="col-sm-2 col-form-label">Quantity</label>
                 <div className="col-sm-8">
-                <input type="date" className="form-control" placeholder="Enter the Updated Date" onChange={(e)=>{
-                    setUpdateDate(e.target.value);
+                <input type="text" className="form-control"  placeholder="Enter the Quantity" onChange={(e)=>{
+                    setQuantity(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Status</label>
+                            <label htmlFor="unit" className="col-sm-2 col-form-label">Unit</label>
+                            <div className="col-sm-8">
+                                <select
+                                    className="form-control"
+                                    onChange={(e) => setUnit(e.target.value)}
+                                >
+                                    <option value="">Select Unit</option>
+                                    <option value="pieces">pieces</option>
+                                    <option value="packs">packs</option>
+                                    <option value="liters">liters</option>
+                                    <option value="boxes">boxes</option>
+                                    <option value="units">units</option>
+                                    <option value="bottles">bottles</option>                                </select>
+                            </div>
+                        </div>
+                        <br />
+
+            <div className="form-group row">
+                <label htmlFor="pricePerUnit" className="col-sm-2 col-form-label">Price Per Unit</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control" placeholder="Enter the Status" onChange={(e)=>{
-                    setStatus(e.target.value);
+                <input type="text" className="form-control" placeholder="Enter Price Per Unit" onChange={(e)=>{
+                    setPricePerUnit(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="supplier" className="col-sm-2 col-form-label">Supplier</label>
+                <div className="col-sm-8">
+                <input type="text" className="form-control" placeholder="Enter supplier" onChange={(e)=>{
+                    setSupplier(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="manufactureDate" className="col-sm-2 col-form-label">Manufacture Date</label>
+                <div className="col-sm-8">
+                <input type="date" className="form-control" placeholder="Enter the Manufacture Date" onChange={(e)=>{
+                    setManufactureDate(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="expiryDate" className="col-sm-2 col-form-label">Expiry Date</label>
+                <div className="col-sm-8">
+                <input type="date" className="form-control" placeholder="Enter the Expiry Date" onChange={(e)=>{
+                    setExpiryDate(e.target.value);
                 }}/>
                 </div>
             </div><br/>

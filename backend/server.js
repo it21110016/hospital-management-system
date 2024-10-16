@@ -39,8 +39,8 @@ app.use("/report",report);
 const inventory = require('./routes/inventory.js');
 app.use("/inventory",inventory);
 
-const bill = require('./routes/bills.js');
-app.use("/bill",bill);
+const billing = require('./routes/billing.js');
+app.use("/billing",billing);
 
 const order = require('./routes/order.js');
 app.use("/order",order);

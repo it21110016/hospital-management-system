@@ -20,7 +20,7 @@ export default function AllReport() {
             })
         }
         getReport();
-    }, [reports])
+    }, [])
 
 
     //serach 
@@ -96,6 +96,7 @@ export default function AllReport() {
                                 <th>Doctor Name</th>
                                 <th>Date</th>
                                 <th>Illness</th>
+                                <th>Image</th>
 
                                 <th className="no-print">Actions</th> {/* Hide actions in print */}
                             </tr>
@@ -104,6 +105,7 @@ export default function AllReport() {
                             {reports
                                 .filter(report =>
                                     report.report_id.toLowerCase().includes(serQuary.toLowerCase())
+                                    || report.doctor_name.toLowerCase().includes(serQuary.toLowerCase())
 
                                 )
                                 .map(report => (

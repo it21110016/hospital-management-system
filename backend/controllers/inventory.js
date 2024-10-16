@@ -1,20 +1,26 @@
 let Inventory = require("../moduls/inventory");
 
 exports.AddInventory = ((req,res) => {
-    const inventory_id = req.body.inventory_id;
-    const inventory_type = req.body.inventory_type;
-    const item_name = req.body.item_name;
-    const location = req.body.location;
-    const update_date = req.body.update_date;
-    const status = req.body.status;
+    const itemName = req.body.itemName;
+    const description = req.body.description;
+    const category = req.body.category;
+    const quantity = req.body.quantity;
+    const unit = req.body.unit;
+    const pricePerUnit = req.body.pricePerUnit;
+    const supplier = req.body.supplier;
+    const manufactureDate = req.body.manufactureDate;
+    const expiryDate = req.body.expiryDate;
 
     const newInventory = new Inventory({
-        inventory_id,
-        inventory_type,
-        item_name,
-        location,
-        update_date,
-        status
+        itemName,
+        description,
+        category,
+        quantity,
+        unit,
+        pricePerUnit,
+        supplier,
+        manufactureDate,
+        expiryDate
     })
 
     newInventory.save().then(()=>{
@@ -27,15 +33,26 @@ exports.AddInventory = ((req,res) => {
 
 exports.UpdateInventory= (async(req,res)=>{
     let userId = req.params.id;
-    const {inventory_id, inventory_type, item_name, location, update_date, status} = req.body;
-
+    const { itemName, 
+        description, 
+        category, 
+        quantity, 
+        unit, 
+        pricePerUnit, 
+        supplier, 
+        manufactureDate, 
+        expiryDate} = req.body;
+     
     const updateInventory = {
-        inventory_id, 
-        inventory_type, 
-        item_name, 
-        location, 
-        update_date, 
-        status
+        itemName, 
+        description, 
+        category, 
+        quantity, 
+        unit, 
+        pricePerUnit, 
+        supplier, 
+        manufactureDate, 
+        expiryDate
     }
 
     const update = await Inventory.findByIdAndUpdate(userId, updateInventory).then(() => {

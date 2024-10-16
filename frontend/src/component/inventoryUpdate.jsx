@@ -6,12 +6,15 @@ import { toast } from "react-hot-toast";
 
 function InventoryUpdate() {
 
-    const [inventory_id, setInventoryID] = useState('')
-    const [inventory_type, setInventoryType] = useState('')
-    const [item_name, setItemName] = useState('')
-    const [location, setLocation] = useState('')
-    const [update_date, setUpdateDate] = useState('')
-    const [status, setStatus] = useState('')
+    const [itemName, setItemName] = useState('')
+    const [description, setDescription] = useState('')
+    const [category, setCategory] = useState('')
+    const [quantity, setQuantity] = useState(0)
+    const [unit, setUnit] = useState('')
+    const [pricePerUnit, setPricePerUnit] = useState(0)
+    const [supplier, setSupplier] = useState('')
+    const [manufactureDate, setManufactureDate] = useState('')
+    const [expiryDate, setExpiryDate] = useState('')
     const navigate = useNavigate();
     
     const {id} = useParams();
@@ -20,21 +23,27 @@ function InventoryUpdate() {
         axios.get("http://localhost:8040/inventory/get/"+id)
         .then((res) => {
             const Inventory = {
-                inventory_id: res.data.inventory_id,
-                inventory_type: res.data.inventory_type,
-                item_name: res.data.item_name,
-                location: res.data.location,
-                update_date: res.data.update_date,
-                status: res.data.status
+               itemName: res.data.itemName,
+                description: res.data.description,
+                category: res.data.category,
+                quantity: res.data.quantity,
+                unit: res.data.unit,
+                pricePerUnit: res.data.pricePerUnit,
+                supplier: res.data.supplier,
+                manufactureDate: res.data.manufactureDate.split('T')[0],
+                expiryDate: res.data.expiryDate.split('T')[0]
             }
 
             console.log(res.data);
-            setInventoryID(Inventory.inventory_id);
-            setInventoryType(Inventory.inventory_type);
-            setItemName(Inventory.item_name);
-            setLocation(Inventory.location);
-            setUpdateDate(Inventory.update_date);
-            setStatus(Inventory.status);
+            setItemName(Inventory.itemName);
+            setDescription(Inventory.description);
+            setCategory(Inventory.category);
+            setQuantity(Inventory.quantity);
+            setUnit(Inventory.unit);
+            setPricePerUnit(Inventory.pricePerUnit);
+            setSupplier(Inventory.supplier);
+            setManufactureDate(Inventory.manufactureDate);
+            setExpiryDate(Inventory.expiryDate);
         })
         .catch((err) => {
             alert(err.message);
@@ -52,12 +61,15 @@ function InventoryUpdate() {
 
                             
                         const newInventory = {
-                            inventory_id, 
-                            inventory_type,
-                            item_name,
-                            location,
-                            update_date,
-                            status
+                            itemName,
+                            description,
+                            category,
+                            quantity,
+                            unit,
+                            pricePerUnit,
+                            supplier,
+                            manufactureDate,
+                            expiryDate
                             }
                                     
                             axios.put("http://localhost:8040/inventory/update/"+id, newInventory)
@@ -73,67 +85,108 @@ function InventoryUpdate() {
             <center><h1>Update Inventory</h1></center>
             <br></br><br></br>
             <div></div>
-            <div className="form-group row">
-                <label htmlFor="name" className="col-sm-2 col-form-label">Inventory ID</label>
-                <div className="col-sm-8">
-                    <input type="text" className="form-control" value={inventory_id} onChange={(e)=>{
-                    setInventoryID(e.target.value);
-                }}/>
-                </div>
-            </div><br/>
-
-           
-
-            <div cclassName="form-group row">
-            <label htmlFor="hourse" className="col-sm-2 col-form-label">Inventory Type </label>  
-            
-            <select onChange={(e)=>{
-                    setInventoryType(e.target.value);
-                }} className="col-sm-1"> 
-       
-            <option value = "Select"> Select   
-            </option> 
-            <option value = "Medical"> Medical   
-            </option>
-            <option value = "Surgery"> Surgery
-            </option>  
-            <option value = "Lab"> Lab  
-            </option>      
-            </select>
-            </div>  <br/>
 
             <div className="form-group row">
-                <label htmlFor="inTime" className="col-sm-2 col-form-label">Item Name</label>
+                <label htmlFor="itemName" className="col-sm-2 col-form-label">Item Name</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control"  value={item_name} onChange={(e)=>{
+                    <input type="text" className="form-control" placeholder='Enter Item Name' value={itemName} onChange={(e)=>{
                     setItemName(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Item Location</label>
+                <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control" value={location} onChange={(e)=>{
-                    setLocation(e.target.value);
+                <input type="text" className="form-control"  placeholder="Enter the description" value={description} onChange={(e)=>{
+                    setDescription(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Update Date</label>
+                            <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
+                            <div className="col-sm-8">
+                                <select
+                                    className="form-control"
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                >
+                                    <option value="">Select Category</option>
+                                    <option value="Medicine">Medicine</option>
+                                    <option value="Equipment">Equipment</option>
+                                    <option value="Supply">Supply</option>
+                                    <option value="Consumable">Consumable</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+
+            <div className="form-group row">
+                <label htmlFor="quantity" className="col-sm-2 col-form-label">Quantity</label>
                 <div className="col-sm-8">
-                <input type="date" className="form-control" value={update_date} onChange={(e)=>{
-                    setUpdateDate(e.target.value);
+                <input type="text" className="form-control"  placeholder="Enter the Quantity"
+                value={quantity}
+                onChange={(e)=>{
+                    setQuantity(e.target.value);
                 }}/>
                 </div>
             </div><br/>
 
             <div className="form-group row">
-                <label htmlFor="outTime" className="col-sm-2 col-form-label">Status</label>
+                            <label htmlFor="unit" className="col-sm-2 col-form-label">Unit</label>
+                            <div className="col-sm-8">
+                                <select
+                                    className="form-control"
+                                    value={unit}
+                                    onChange={(e) => setUnit(e.target.value)}
+                                >
+                                    <option value="">Select Unit</option>
+                                    <option value="pieces">pieces</option>
+                                    <option value="packs">packs</option>
+                                    <option value="liters">liters</option>
+                                    <option value="boxes">boxes</option>
+                                    <option value="units">units</option>
+                                    <option value="bottles">bottles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+
+            <div className="form-group row">
+                <label htmlFor="pricePerUnit" className="col-sm-2 col-form-label">Price Per Unit</label>
                 <div className="col-sm-8">
-                <input type="text" className="form-control" value={status} onChange={(e)=>{
-                    setStatus(e.target.value);
+                <input type="text" className="form-control" placeholder="Enter Price Per Unit" 
+                value={pricePerUnit}
+                onChange={(e)=>{
+                    setPricePerUnit(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="supplier" className="col-sm-2 col-form-label">Supplier</label>
+                <div className="col-sm-8">
+                <input type="text" className="form-control" placeholder="Enter supplier" value={supplier} onChange={(e)=>{
+                    setSupplier(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="manufactureDate" className="col-sm-2 col-form-label">Manufacture Date</label>
+                <div className="col-sm-8">
+                <input type="date" className="form-control" placeholder="Enter the Manufacture Date" value={manufactureDate} onChange={(e)=>{
+                    setManufactureDate(e.target.value);
+                }}/>
+                </div>
+            </div><br/>
+
+            <div className="form-group row">
+                <label htmlFor="expiryDate" className="col-sm-2 col-form-label">Expiry Date</label>
+                <div className="col-sm-8">
+                <input type="date" className="form-control" placeholder="Enter the Expiry Date" value={expiryDate} onChange={(e)=>{
+                    setExpiryDate(e.target.value);
                 }}/>
                 </div>
             </div><br/>
